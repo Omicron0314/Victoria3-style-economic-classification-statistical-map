@@ -21,8 +21,9 @@ export function useMapData() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // 加载 GeoJSON 数据
-        const geoData = await d3.json('/countries.geo.json');
+        // 加载 GeoJSON 数据（支持不同的 base 路径，例如 GitHub Pages）
+        const baseUrl = import.meta.env.BASE_URL || '/';
+        const geoData = await d3.json(`${baseUrl}countries.geo.json`);
         if (!geoData || !geoData.features) {
           throw new Error('Failed to load GeoJSON data');
         }
@@ -30,10 +31,10 @@ export function useMapData() {
 
         // 同时加载三个CSV数据
         const [gdpCsvText, perCapitaCsvText, perCapitaPppCsvText, giniCsvText] = await Promise.all([
-          fetch('/imf-dm-export-20260302.csv').then(r => r.text()),
-          fetch('/GDP%20per%20capita.csv').then(r => r.text()),
-          fetch('/GDP%20per%20capita,%20PPP.csv').then(r => r.text()),
-          fetch('/Gini%20Index.csv').then(r => r.text())
+          fetch(`${baseUrl}imf-dm-export-20260302.csv`).then(r => r.text()),
+          fetch(`${baseUrl}GDP%20per%20capita.csv`).then(r => r.text()),
+          fetch(`${baseUrl}GDP%20per%20capita,%20PPP.csv`).then(r => r.text()),
+          fetch(`${baseUrl}Gini%20Index.csv`).then(r => r.text())
         ]);
 
         // 解析CSV数据
