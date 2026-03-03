@@ -406,7 +406,6 @@
 /* 手机小屏幕时将图例上移到右上角，避免底部难以操作 */
 @media (max-width: 600px) {
   .gdp-legend {
-    top: 10px;
     bottom: auto;
     right: 10px;
   }
