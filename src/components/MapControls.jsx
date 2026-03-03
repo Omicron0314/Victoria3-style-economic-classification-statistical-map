@@ -5,9 +5,9 @@
 
 import React from 'react';
 
-const MapControls = ({ zoom, onReset }) => {
+const MapControls = ({ zoom, onReset, isDarkMode }) => {
   return (
-    <div className="controls">
+    <div className={`controls${isDarkMode ? ' dark' : ''}`}>
       <button
         className="btn-reset"
         onClick={onReset}

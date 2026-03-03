@@ -545,6 +545,21 @@
   padding: 6px;
 }
 
+/* 显式暗色类 */
+.tooltip.dark {
+  background-color: rgba(20, 20, 20, 0.95);
+  color: #e0e0e0;
+  border-color: #555;
+}
+
+.controls.dark {
+  background-color: rgba(40, 44, 52, 0.95) !important;
+}
+
+.gdp-legend.dark {
+  background-color: rgba(40, 44, 52, 0.95) !important;
+}
+
 /* 深色模式支持 */
 @media (prefers-color-scheme: dark) {
   .controls,
@@ -594,5 +609,28 @@
 
   .selector-label {
     color: #b0b0b0;
+  }
+
+  /* map element overrides */
+  .ocean {
+    fill: #0a1e2e !important;
+  }
+  .graticule {
+    stroke: #888 !important;
+    opacity: 0.1;
+  }
+  .map-container {
+    background: #111 !important;
+  }
+  .controls,
+  .gdp-legend,
+  .tooltip {
+    /* variants are already set above for controls/legend; tooltip below */
+  }
+
+  .tooltip {
+    background-color: rgba(20, 20, 20, 0.95);
+    color: #e0e0e0;
+    border-color: #555;
   }
 }

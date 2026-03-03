@@ -47,3 +47,12 @@ export const antiqueMapStyles = {
   shadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
   fontFamily: "'Times New Roman', Georgia, serif"
 };
+
+// 深色模式下的古地图样式
+export const antiqueMapStylesDark = {
+  background: '#1a1a1a',
+  border: '2px solid #888',
+  textColor: '#e0e0e0',
+  shadow: '0 4px 12px rgba(0, 0, 0, 0.6)',
+  fontFamily: "'Times New Roman', Georgia, serif"
+};

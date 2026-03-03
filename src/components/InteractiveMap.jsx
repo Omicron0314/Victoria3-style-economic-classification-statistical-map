@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import '../styles/InteractiveMap.css';
 import { useMapData } from '../hooks/useMapData.js';
 import { dataTypes } from '../constants/dataTypes.js';
-import { mapStyles, antiqueMapStyles } from '../constants/styles.js';
+import { mapStyles, antiqueMapStyles, antiqueMapStylesDark } from '../constants/styles.js';
 import { createColorScale, getCountryColor, calculateDataRange } from '../utils/colorScale.js';
 import {
   initializeMap,
@@ -20,17 +20,54 @@ const InteractiveMap = () => {
   const svgRef = useRef();
   const mapInfoRef = useRef(null);
 
+  // 主题状态监听系统暗色偏好
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   // 状态管理
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, name: '', value: null, year: 2025 });
   const [zoom, setZoom] = useState(1);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedDataType, setSelectedDataType] = useState('gdp');
   const [dataYear, setDataYear] = useState(2025);
+  const [themeToggle, setThemeToggle] = useState(0);
 
   // 使用自定义钩子加载数据
   const { geoData, allData, gdpRange, perCapitaRange, loading, error } = useMapData();
 
-  // 初始化地图 - 只在geoData加载完成后执行一次
+  // 监听系统深色模式变更
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const listener = (e) => setIsDarkMode(e.matches);
+    listener(mq);
+    mq.addEventListener('change', listener);
+    return () => mq.removeEventListener('change', listener);
+  }, []);
+
+  // 根据主题更新 mapStyles
+  useEffect(() => {
+    if (isDarkMode) {
+      mapStyles.ocean.fill = '#0a1e2e';
+      mapStyles.country.defaultStroke = '#aaa';
+      mapStyles.country.defaultFill = '#444';
+      mapStyles.country.hoverFill = '#555';
+      mapStyles.graticule.stroke = '#888';
+    } else {
+      mapStyles.ocean.fill = '#3d5a80';
+      mapStyles.country.defaultStroke = '#5c4033';
+      mapStyles.country.defaultFill = '#000000';
+      mapStyles.country.hoverFill = '#e8d7b8';
+      mapStyles.graticule.stroke = '#5c4033';
+    }
+
+    // 如果地图已经初始化，则更新海洋填充
+    if (mapInfoRef.current) {
+      mapInfoRef.current.svg.select('rect.ocean').attr('fill', mapStyles.ocean.fill);
+      // 触发主题重新渲染
+      setThemeToggle(t => t + 1);
+    }
+  }, [isDarkMode]);
+
+  // 初始化地图 - 依赖geoData或主题变化
   useEffect(() => {
     if (!svgRef.current || !geoData) return;
 
@@ -49,7 +86,7 @@ const InteractiveMap = () => {
         mapInfoRef.current.svg.on('mouseleave', null);
       }
     };
-  }, [geoData]);
+  }, [geoData, isDarkMode]);
 
   // 在数据或数据类型改变时重新渲染countries
   useEffect(() => {
@@ -101,7 +138,7 @@ const InteractiveMap = () => {
         setSelectedCountry(countryName);
       }
     );
-  }, [geoData, allData, selectedDataType, selectedCountry]);
+  }, [geoData, allData, selectedDataType, selectedCountry, isDarkMode, themeToggle]);
 
   // 处理重置地图
   const handleReset = () => {
@@ -121,7 +158,7 @@ const InteractiveMap = () => {
   };
 
   return (
-    <div className="map-container">
+    <div className={`map-container${isDarkMode ? ' dark' : ''}`}>
       <svg ref={svgRef} className="map-svg"></svg>
 
       {/* 提示框 */}
@@ -133,10 +170,11 @@ const InteractiveMap = () => {
         value={tooltip.value}
         year={tooltip.year}
         valueFormatter={dataTypes[selectedDataType]?.valueFormatter}
+        isDarkMode={isDarkMode}
       />
 
       {/* 控制面板 */}
-      <MapControls zoom={zoom} onReset={handleReset} />
+      <MapControls zoom={zoom} onReset={handleReset} isDarkMode={isDarkMode} />
 
       {/* GDP 图例和数据选择器 */}
       <GDPLegend
@@ -145,6 +183,7 @@ const InteractiveMap = () => {
         dataYear={dataYear}
         gdpRange={gdpRange}
         perCapitaRange={perCapitaRange}
+        isDarkMode={isDarkMode}
       />
 
       {/* 显示选中的国家 */}
@@ -154,15 +193,15 @@ const InteractiveMap = () => {
             position: 'absolute',
             top: '20px',
             left: '220px',
-            background: antiqueMapStyles.background,
-            border: antiqueMapStyles.border,
+            background: (isDarkMode ? antiqueMapStylesDark : antiqueMapStyles).background,
+            border: (isDarkMode ? antiqueMapStylesDark : antiqueMapStyles).border,
             padding: '12px 16px',
-            fontFamily: antiqueMapStyles.fontFamily,
-            color: antiqueMapStyles.textColor,
+            fontFamily: (isDarkMode ? antiqueMapStylesDark : antiqueMapStyles).fontFamily,
+            color: (isDarkMode ? antiqueMapStylesDark : antiqueMapStyles).textColor,
             fontSize: '13px',
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
-            boxShadow: antiqueMapStyles.shadow,
+            boxShadow: (isDarkMode ? antiqueMapStylesDark : antiqueMapStyles).shadow,
             zIndex: 500
           }}
         >

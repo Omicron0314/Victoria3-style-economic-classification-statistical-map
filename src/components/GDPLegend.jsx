@@ -6,13 +6,13 @@
 import React from 'react';
 import { dataTypes } from '../constants/dataTypes.js';
 
-const GDPLegend = ({ selectedDataType, onDataTypeChange, dataYear, gdpRange, perCapitaRange }) => {
+const GDPLegend = ({ selectedDataType, onDataTypeChange, dataYear, gdpRange, perCapitaRange, isDarkMode }) => {
   const currentConfig = dataTypes[selectedDataType];
   const isChoropleths = currentConfig?.isChoropleths || false;
   const range = selectedDataType === 'gdp' ? gdpRange : perCapitaRange;
 
   return (
-    <div className="gdp-legend">
+    <div className={`gdp-legend${isDarkMode ? ' dark' : ''}`}>
       <div className="legend-title">
         {currentConfig?.label} ({dataYear})
         {isChoropleths && (
