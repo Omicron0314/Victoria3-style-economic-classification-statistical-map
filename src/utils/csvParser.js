@@ -3,7 +3,7 @@
  * 用于解析GDP和人均GDP的CSV文件
  */
 
-import { gdpCountryNameMapping, perCapitaCountryNameMapping } from '../constants/countryNameMappings.js';
+import { gdpCountryNameMapping, perCapitaCountryNameMapping, perCapitaGdpPppCountryNameMapping } from '../constants/countryNameMappings.js';
 
 /**
  * 简单的CSV解析函数，处理引号和逗号
@@ -172,4 +172,86 @@ export function parsePerCapitaGDPData(csvText) {
   }
 
   return { data: perCapitaMap };
+}
+
+/**
+ * 解析人均GDP PPP CSV数据
+ * @param {string} csvText - CSV文件内容
+ * @returns {object} {data: {国家名称: {value, year}}}
+ */
+export function parsePerCapitaGDPPPPData(csvText) {
+  const lines = csvText.split('\n');
+
+  // 人均GDP PPP CSV格式：前两行是元数据，第三行是标题，之后是数据
+  // 查找实际的标题行（包含"Country Name"）
+  let headerLineIdx = -1;
+  for (let i = 0; i < Math.min(5, lines.length); i++) {
+    if (lines[i].includes('Country Name')) {
+      headerLineIdx = i;
+      break;
+    }
+  }
+
+  if (headerLineIdx === -1) {
+    console.error('Could not find header in per capita GDP PPP CSV');
+    return { data: {} };
+  }
+
+  const headers = lines[headerLineIdx].split(',').map(h => h.trim().replace(/"/g, ''));
+
+  // 找到年份列的索引（从2025开始，逐年向前）
+  const availableYears = [];
+  for (let i = 2025; i >= 2015; i--) {
+    const yearIndex = headers.indexOf(i.toString());
+    if (yearIndex !== -1) {
+      availableYears.push({ year: i, index: yearIndex });
+    }
+  }
+
+  if (availableYears.length === 0) {
+    console.error('No year data found in per capita GDP PPP CSV');
+    return { data: {} };
+  }
+
+  const perCapitaPppMap = {};
+
+  for (let i = headerLineIdx + 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    const parts = parseCSVLine(line);
+
+    if (parts.length < 4) continue;
+
+    let countryName = parts[0].trim().replace(/"/g, '');
+
+    // 应用名称映射
+    if (perCapitaGdpPppCountryNameMapping[countryName]) {
+      countryName = perCapitaGdpPppCountryNameMapping[countryName];
+    }
+
+    // 找到第一个有有效数据的年份
+    let foundValue = null;
+    let actualYear = 2025;
+
+    for (const { year, index } of availableYears) {
+      if (index < parts.length) {
+        const dataValue = parts[index].trim();
+        if (dataValue && dataValue !== '' && dataValue !== '..') {
+          const numValue = parseFloat(dataValue);
+          if (!isNaN(numValue) && numValue > 0) {
+            foundValue = numValue;
+            actualYear = year;
+            break;
+          }
+        }
+      }
+    }
+
+    if (foundValue !== null) {
+      perCapitaPppMap[countryName] = { value: foundValue, year: actualYear };
+    }
+  }
+
+  return { data: perCapitaPppMap };
 }

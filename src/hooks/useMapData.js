@@ -5,12 +5,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { parseGDPData, parsePerCapitaGDPData } from '../utils/csvParser.js';
+import { parseGDPData, parsePerCapitaGDPData, parsePerCapitaGDPPPPData } from '../utils/csvParser.js';
 
 export function useMapData() {
-  const [allData, setAllData] = useState({ gdp: {}, perCapitaGdp: {} });
+  const [allData, setAllData] = useState({ gdp: {}, perCapitaGdp: {}, perCapitaGdpPpp: {} });
   const [gdpRange, setGdpRange] = useState({ min: 0, max: 0 });
   const [perCapitaRange, setPerCapitaRange] = useState({ min: 0, max: 0 });
+  const [perCapitaPppRange, setPerCapitaPppRange] = useState({ min: 0, max: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -26,17 +27,19 @@ export function useMapData() {
         }
         geoDataRef.current = geoData;
 
-        // 同时加载两个CSV数据
-        const [gdpCsvText, perCapitaCsvText] = await Promise.all([
+        // 同时加载三个CSV数据
+        const [gdpCsvText, perCapitaCsvText, perCapitaPppCsvText] = await Promise.all([
           fetch('/imf-dm-export-20260302.csv').then(r => r.text()),
-          fetch('/GDP%20per%20capita.csv').then(r => r.text())
+          fetch('/GDP%20per%20capita.csv').then(r => r.text()),
+          fetch('/GDP%20per%20capita,%20PPP.csv').then(r => r.text())
         ]);
 
         // 解析CSV数据
         const { data: gdpDataMap } = parseGDPData(gdpCsvText);
         const { data: perCapitaDataMap } = parsePerCapitaGDPData(perCapitaCsvText);
+        const { data: perCapitaPppDataMap } = parsePerCapitaGDPPPPData(perCapitaPppCsvText);
 
-        const newAllData = { gdp: gdpDataMap, perCapitaGdp: perCapitaDataMap };
+        const newAllData = { gdp: gdpDataMap, perCapitaGdp: perCapitaDataMap, perCapitaGdpPpp: perCapitaPppDataMap };
         setAllData(newAllData);
 
         // 计算GDP范围
@@ -61,6 +64,17 @@ export function useMapData() {
           });
         }
 
+        // 计算人均GDP PPP范围
+        const perCapitaPppValues = Object.values(perCapitaPppDataMap)
+          .map(v => v?.value)
+          .filter(v => v !== undefined && v !== null && !isNaN(v));
+        if (perCapitaPppValues.length > 0) {
+          setPerCapitaPppRange({
+            min: Math.min(...perCapitaPppValues),
+            max: Math.max(...perCapitaPppValues)
+          });
+        }
+
         setLoading(false);
       } catch (err) {
         console.error('Error loading data:', err);
@@ -77,6 +91,7 @@ export function useMapData() {
     allData,
     gdpRange,
     perCapitaRange,
+    perCapitaPppRange,
     loading,
     error,
     geoDataRef
