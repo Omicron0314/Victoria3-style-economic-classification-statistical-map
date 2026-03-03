@@ -408,7 +408,8 @@
   position: absolute;
   bottom: 20px;
   right: 20px;
-  background: linear-gradient(135deg, #d4c5a0 0%, #cbb996 100%);
+  /* darker, higher contrast background */
+  background: linear-gradient(135deg, #a08860 0%, #8c7a52 100%);
   border: 2px solid #5c4033;
   border-radius: 0;
   padding: 16px 18px;
@@ -423,7 +424,7 @@
 
 .legend-title {
   font-size: 13px;
-  color: #3d2817;
+  color: #2a1e0e; /* darker for contrast */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -476,7 +477,7 @@
 
 .legend-label {
   font-size: 12px;
-  color: #3d2817;
+  color: #2a1e0e;
   font-weight: 500;
 }
 
