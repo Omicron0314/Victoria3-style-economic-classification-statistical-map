@@ -160,7 +160,27 @@ A: 示例中已包含响应式 CSS，考虑添加触摸事件处理。
 
 MIT License
 
-## 👥 贡献
+## � 部署到 GitHub Pages
+
+项目可以直接托管到 GitHub Pages：
+
+1. 在 [GitHub 仓库设置](https://github.com/yourname/yourrepo/settings/pages)中启用 Pages。
+2. 在 `package.json` 中将 `homepage` 字段替换为你的页面地址，例如：
+   ```json
+   "homepage": "https://<username>.github.io/<repo>/"
+   ```
+3. 确保 `vite.config.js` 的 `base` 值对应仓库名（已在配置中自动处理）。
+4. 安装依赖并部署：
+   ```bash
+   npm install --save-dev gh-pages
+   npm run deploy
+   ```
+   这会先构建项目，然后将 `dist/` 内容推送到 `gh-pages` 分支。
+
+> **注意**：若仓库为 `username.github.io` 根域名，`homepage` 可为 `"https://username.github.io/"`，
+> 且 `base` 也应设为 `'/'`。
+
+## �👥 贡献
 
 欢迎提交 Issue 和 Pull Request！
 
