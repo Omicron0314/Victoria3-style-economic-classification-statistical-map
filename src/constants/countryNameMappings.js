@@ -13,8 +13,6 @@ export const gdpCountryNameMapping = {
   'Brunei Darussalam': 'Brunei',
   'Cabo Verde': 'Cape Verde',
   'China, People\'s Republic of': 'China',
-  "China, People's Republic of": 'China',
-  'China, People\'s Republic of (PRC)': 'China',
   'Comoros': 'Comoros',
   'Congo, Dem. Rep. of the': 'Democratic Republic of the Congo',
   'Congo, Republic of': 'Republic of the Congo',
