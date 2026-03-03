@@ -411,7 +411,7 @@
     bottom: auto;
     right: auto;
     max-width: 150px;        /* 宽度更窄 */
-    max-height: 40vh;        /* 高度限制为视口的 40% */
+    max-height: 20vh;        /* 高度限制为视口的 20% */
     overflow-y: auto;        /* 内容超出时滚动 */
   }
 }
