@@ -1,114 +1,78 @@
-# 🗺️ 维多利亚3风格的经济分级统计地图 (Victoria 3 style economic classification statistical map)
+# 🗺️ 维多利亚3风格的经济分级统计地图
+Victoria 3 style economic classification statistical map
 
-基于 React 和 D3.js 构建的全屏交互式地球地图组件。使用 **echarts-countries-js** 地理数据渲染国家边界，支持全面的交互功能和 Victoria 3 复古游戏风格。
+该项目是一个使用 **React 19** 和 **D3 v7** 构建的全屏交互式地球可视化应用。地图采用
+**Mercator 投影**并加载高精度 GeoJSON 边界（由 echarts-countries-js 数据合并而成），
+呈现经典《维多利亚 3》复古游戏感与羊皮纸配色。
 
-## ✨ 功能特性
+用户可在右下角切换多维经济指标：GDP、各类人均GDP（现价/PPP）以及基尼系数。
+图例自动更新色阶、最大/最小范围，以及是否采用分级统计模式。
+## ✨ 主要特性
 
-- 🌍 **完整的全球地图** - 使用 Mercator 投影，基于 echarts-countries-js 的高精度地理数据，覆盖全球所有国家和地区
-- 🖱️ **交互式控制** - 拖拽平移、滚轮缩放、单击放大国家
-- 🎨 **Victor 3 复古风格** - 古董地图美学、羊皮纸色调、深棕色边界
-- 📱 **响应式设计** - 自适应各种屏幕尺寸
-- ♿ **可访问性** - 支持深色模式和高对比度
-- 🚀 **高性能渲染** - 使用 D3.js 优化的地理数据可视化，2,518 个地理特征
+- **全球覆盖**：加载 2 518 个地理特征，支持 209 个国家/地区。
+- **多指标选择**：GDP、GDP per capita、GDP per capita (PPP)、基尼系数，基于最新可用年度数据。
+- **交互操作**：拖拽平移、滚轮缩放、单击选中、提示显示、重置视图。
+- **复古美学**：Victoria 3 羊皮纸 + 深棕边界 + 红灰绿色阶；支持深色/黑夜模式。
+- **响应式 & 无障碍**：适配移动端；颜色对比优化，暗色样式自动启用。
+- **高性能**：D3 数据绑定与缩放；避免重复渲染。
 
-## 📋 快速开始
+## � 快速上手
 
-### 环境要求
-
-- Node.js >= 16.0.0
-- npm >= 8.0.0
-
-### 安装依赖
+环境需求：Node ≥16、npm ≥8。
 
 ```bash
-# 进入项目目录
 cd "/Users/Omicron0314/Programme/v3 map"
-
-# 安装所有依赖
 npm install
+npm run dev      # 启动开发服务器
+# 访问 http://localhost:5173
 ```
 
-### 启动开发服务器
+生产构建：
 
 ```bash
-npm run dev
+npm run build     # 输出到 dist/
 ```
 
-打开浏览器访问 `http://localhost:5173` 即可看到交互式地图。
+## 📊 地理数据
 
-### 生产环境构建
+地图边界来自https://github.com/johan/world.geo.json
 
-```bash
-npm run build
-```
-
-构建输出文件将在 `dist/` 目录中。
-
-## 📊 地理数据说明
-
-本项目使用 **echarts-countries-js** 库作为地理数据源，提供了全球 209 个国家/地区的高精度边界数据。
-
-### 数据合并流程
-
-地理数据已通过以下脚本预合并：
-
-```bash
-python3 scripts/merge_echarts_countries.py
-```
-
-此脚本：
-- 从 `echarts-countries-js/` 目录读取所有国家数据
-- 提取 GeoJSON FeatureCollection
-- 为每个特征添加国家标识
-- 生成统一的 `public/world-map.json` 文件
-
-**合并结果统计：**
-- ✓ 已处理国家文件：209 个
-- ✓ 总地理特征数：2,518 个
-- ✓ 输出文件大小：4.2 MB
+无需手动运行即可使用。若更换数据源，只需更新该脚本并重新构建。
 
 ## 🎮 使用说明
 
-### 基本交互
+- **拖拽**：平移视图
+- **滚轮**：缩放
+- **悬停**：显示国家提示
+- **单击**：选择并高亮
+- **重置**：恢复全图
 
-| 操作 | 功能 |
-|------|------|
-| 🖱️ **拖拽** | 平移地图视图 |
-| 🔍 **滚轮** | 缩放地图（放大/缩小） |
-| 🖐️ **悬停** | 高亮国家，显示国家名称 |
-| 🖱️ **单击** | 放大选中的国家 |
-| 🔄 **重置按钮** | 返回全局视图 |
-
-### 接口示例
+组件可作为独立模块引入：
 
 ```jsx
 import InteractiveMap from './components/InteractiveMap';
 
-function App() {
-  return (
-    <InteractiveMap geoJsonPath="/countries.geo.json" />
-  );
+export default function App() {
+  return <InteractiveMap geoJsonPath="/countries.geo.json" />;
 }
 ```
 
 ## 📁 项目结构
 
 ```
-v3 map/
-├── src/
-│   ├── components/
-│   │   └── InteractiveMap.jsx          # 主地图组件
-│   ├── styles/
-│   │   └── InteractiveMap.css          # 地图样式
-│   ├── App.jsx                         # 主应用组件
-│   ├── App.css                         # 应用样式
-│   ├── index.css                       # 全局样式
-│   └── main.jsx                        # 应用入口
-├── public/
-│   └── countries.geo.json              # 地理数据文件
-├── package.json                        # 项目配置
-├── vite.config.js                      # Vite 配置
-└── index.html                          # HTML 模板
+/ (根目录)
+├─ src/
+│   ├─ components/   — React 组件
+│   │   └─ InteractiveMap.jsx
+│   ├─ hooks/        — 数据加载钩子
+│   ├─ utils/        — CSV 解析、地图渲染、色阶
+│   ├─ constants/    — 配置与名称映射
+│   └─ styles/       — CSS 文件
+├─ public/           — 静态资源（GeoJSON, CSV）
+├─ scripts/          — 数据处理脚本
+├─ package.json
+├─ vite.config.js
+└─ index.html
 ```
 
 ## 🔧 技术栈
@@ -175,9 +139,6 @@ v3 map/
 
 ## 📝 常见问题
 
-### Q: 地图数据来自哪里？
-A: 使用标准的 GeoJSON 格式的世界地图数据，可从 [Natural Earth](https://www.naturalearthdata.com/) 或 GitHub 获取。
-
 ### Q: 如何添加自定义数据图层？
 A: 在 InteractiveMap 组件中添加新的 d3 元素：
 
@@ -208,7 +169,6 @@ MIT License
 - [D3.js 官方文档](https://d3js.org/)
 - [React 官方文档](https://react.dev/)
 - [GeoJSON 规范](https://geojson.org/)
-- [Natural Earth 数据](https://www.naturalearthdata.com/)
 
 ---
 
