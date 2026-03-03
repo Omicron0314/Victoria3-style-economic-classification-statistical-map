@@ -1,4 +1,4 @@
-# 🗺️ 交互式地图应用
+# 🗺️ 维多利亚3风格的经济分级统计地图 (Victoria 3 style economic classification statistical map)
 
 基于 React 和 D3.js 构建的全屏交互式地球地图组件。使用 **echarts-countries-js** 地理数据渲染国家边界，支持全面的交互功能和 Victoria 3 复古游戏风格。
 

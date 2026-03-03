@@ -30,7 +30,7 @@ const GDPLegend = ({ selectedDataType, onDataTypeChange, dataYear, gdpRange, per
   return (
     <div className={`gdp-legend${isDarkMode ? ' dark' : ''}`}>
       <div className="legend-title">
-        {currentConfig?.label} ({dataYear})
+        {currentConfig?.label}
         {isChoropleths && (
           <span style={{ fontSize: '11px', marginLeft: '8px', opacity: 0.7 }}>
             分级统计

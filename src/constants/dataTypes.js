@@ -5,7 +5,7 @@
 
 export const dataTypes = {
   gdp: {
-    label: '国内生产总值 (GDP,现价美元)',
+    label: 'GDP,现价美元',
     unit: '十亿 USD',
     colors: {
       low: '#9B5555',
@@ -42,7 +42,7 @@ export const dataTypes = {
     ]
   },
   perCapitaGdp: {
-    label: '人均国内生产总值 (人均GDP,现价美元)',
+    label: '人均GDP,现价美元',
     unit: 'USD',
     colors: {
       low: '#9B5555',
@@ -79,7 +79,7 @@ export const dataTypes = {
     ]
   },
   perCapitaGdpPpp: {
-    label: '人均国内生产总值 PPP (人均GDP PPP)',
+    label: '人均GDP,PPP',
     unit: 'USD PPP',
     colors: {
       low: '#9B5555',
