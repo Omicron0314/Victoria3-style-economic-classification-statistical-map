@@ -1,0 +1,598 @@
+/* 地图容器样式 - 维多利亚3风格 */
+.map-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #3d3531 0%, #2a2420 50%, #4a4238 100%);
+  background-attachment: fixed;
+}
+
+/* SVG 地图样式 */
+.map-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+/* 海洋背景 */
+.ocean {
+  fill: #3d5a80;
+  pointer-events: none;
+}
+
+/* 国家路径样式 - 维多利亚3复古风格 */
+.country {
+  transition: fill 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
+  stroke-linejoin: miter;
+  stroke-linecap: round;
+  opacity: 0.9;
+  /* 注意：fill 由 JavaScript 动态设置，不在 CSS 中定义 */
+}
+
+.country:hover {
+  filter: brightness(1.05);
+  cursor: pointer;
+}
+
+.country.selected {
+  filter: brightness(1.08);
+}
+
+/* 网格线样式 - 古地图风格 */
+.graticule {
+  opacity: 0.08;
+  stroke: #5c4033;
+  stroke-width: 0.3;
+  pointer-events: none;
+}
+
+/* Tooltip 样式 - 复古风格 */
+.tooltip {
+  position: absolute;
+  background-color: rgba(74, 66, 56, 0.95);
+  color: #e8d7b8;
+  padding: 10px 14px;
+  border-radius: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Times New Roman', Georgia, serif;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+  animation: fadeIn 0.15s ease-out;
+  border: 1px solid #5c4033;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+  will-change: left, top;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 控制面板样式 - 复古木纹风格 */
+.controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #5c4033 0%, #4a3829 100%);
+  border-radius: 0;
+  padding: 16px 18px;
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  z-index: 500;
+  min-width: 180px;
+  border: 2px solid #3d2817;
+}
+
+.btn-reset {
+  width: 100%;
+  padding: 11px 14px;
+  background: linear-gradient(135deg, #d4c5a0 0%, #c9b896 100%);
+  color: #3d2817;
+  border: 1px solid #5c4033;
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Times New Roman', Georgia, serif;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-reset:hover {
+  background: linear-gradient(135deg, #e8d7b8 0%, #dcc8a8 100%);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: #3d2817;
+}
+
+.btn-reset:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.zoom-info {
+  font-size: 11px;
+  color: #d4c5a0;
+  text-align: center;
+  font-family: 'Courier New', 'Monaco', monospace;
+  margin-top: 8px;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* 图例样式 - 复古纸张风格 */
+.legend {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #d4c5a0 0%, #cbb996 100%);
+  border-radius: 0;
+  padding: 16px 18px;
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  z-index: 500;
+  max-width: 280px;
+  border: 2px solid #5c4033;
+}
+
+.legend h3 {
+  margin: 0 0 14px 0;
+  font-size: 14px;
+  color: #3d2817;
+  font-weight: 600;
+  font-family: 'Times New Roman', Georgia, serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid rgba(61, 40, 23, 0.3);
+  padding-bottom: 8px;
+}
+
+.legend ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend li {
+  font-size: 12px;
+  color: #3d2817;
+  margin: 8px 0;
+  padding-left: 0;
+  line-height: 1.6;
+  font-family: 'Times New Roman', Georgia, serif;
+}
+
+.legend li::before {
+  content: '▪ ';
+  color: #5c4033;
+  margin-right: 6px;
+  font-weight: bold;
+}
+
+/* 响应式设计 - 维持复古风格 */
+@media (max-width: 768px) {
+  .controls {
+    top: 10px;
+    right: 10px;
+    padding: 12px 14px;
+    min-width: 160px;
+  }
+
+  .legend {
+    bottom: 10px;
+    left: 10px;
+    max-width: 220px;
+    font-size: 11px;
+    padding: 12px 14px;
+  }
+
+  .legend h3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .btn-reset {
+    padding: 9px 12px;
+    font-size: 11px;
+  }
+
+  .country {
+    stroke-width: 0.6;
+  }
+
+  .country:hover {
+    stroke-width: 1.2;
+  }
+}
+
+/* 深色模式（维持深棕色主题）*/
+@media (prefers-color-scheme: dark) {
+  .legend {
+    background: linear-gradient(135deg, #b8a878 0%, #a89968 100%);
+    border-color: #3d2817;
+  }
+
+  .legend h3 {
+    color: #3d2817;
+  }
+
+  .legend li {
+    color: #3d2817;
+  }
+
+  .controls {
+    background: linear-gradient(135deg, #4a3829 0%, #3d2817 100%);
+    border-color: #2a2420;
+  }
+
+  .zoom-info {
+    color: #b8a878;
+  }
+}
+
+/* 打字机效果和古董感 */
+.country {
+  vector-effect: non-scaling-stroke;
+}
+
+.graticule {
+  vector-effect: non-scaling-stroke;
+}
+
+/* Tooltip 样式 */
+.tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 控制面板样式 */
+.controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 500;
+  min-width: 160px;
+}
+
+.btn-reset {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.btn-reset:hover {
+  background-color: #764ba2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-reset:active {
+  transform: translateY(0);
+}
+
+.zoom-info {
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+}
+
+/* 图例样式 */
+.legend {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: white;
+  border-radius: 8px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 500;
+  max-width: 250px;
+}
+
+.legend h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+.legend ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend li {
+  font-size: 13px;
+  color: #555;
+  margin: 8px 0;
+  padding-left: 0;
+  line-height: 1.5;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .controls {
+    top: 10px;
+    right: 10px;
+    padding: 12px;
+  }
+
+  .legend {
+    bottom: 10px;
+    left: 10px;
+    max-width: 200px;
+    font-size: 12px;
+  }
+
+  .legend h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .btn-reset {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .gdp-legend {
+    right: 20px;
+    width: auto;
+  }
+}
+
+/* GDP 图例样式 - 复古统计图 */
+.gdp-legend {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #d4c5a0 0%, #cbb996 100%);
+  border: 2px solid #5c4033;
+  border-radius: 0;
+  padding: 16px 18px;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  z-index: 500;
+  max-width: 220px;
+  font-family: 'Times New Roman', Georgia, serif;
+}
+
+.legend-title {
+  font-size: 13px;
+  color: #3d2817;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(61, 40, 23, 0.3);
+}
+
+.legend-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.legend-scale::-webkit-scrollbar {
+  width: 6px;
+}
+
+.legend-scale::-webkit-scrollbar-track {
+  background: rgba(61, 40, 23, 0.1);
+  border-radius: 3px;
+}
+
+.legend-scale::-webkit-scrollbar-thumb {
+  background: rgba(61, 40, 23, 0.3);
+  border-radius: 3px;
+}
+
+.legend-scale::-webkit-scrollbar-thumb:hover {
+  background: rgba(61, 40, 23, 0.5);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(61, 40, 23, 0.3);
+  border-radius: 2px;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.legend-label {
+  font-size: 12px;
+  color: #3d2817;
+  font-weight: 500;
+}
+
+.legend-range {
+  font-size: 11px;
+  color: #3d2817;
+  text-align: center;
+  border-top: 1px solid rgba(61, 40, 23, 0.3);
+  padding-top: 8px;
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+/* 数据选择器样式 - 集成在图例中 */
+.data-selector-section {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(61, 40, 23, 0.3);
+}
+
+.selector-label {
+  display: block;
+  font-size: 11px;
+  color: #3d2817;
+  font-weight: 600;
+  font-family: 'Times New Roman', Georgia, serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.selector-dropdown {
+  width: 100%;
+  padding: 8px 10px;
+  background: linear-gradient(135deg, #e8d7b8 0%, #dcc8a8 100%);
+  color: #3d2817;
+  border: 1px solid #5c4033;
+  border-radius: 0;
+  font-size: 11px;
+  font-family: 'Times New Roman', Georgia, serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233d2817' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 16px;
+  padding-right: 26px;
+}
+
+.selector-dropdown:hover {
+  background: linear-gradient(135deg, #f0e0c8 0%, #e2d0b4 100%);
+  border-color: #3d2817;
+}
+
+.selector-dropdown:focus {
+  outline: none;
+  border-color: #3d2817;
+  box-shadow: 0 0 0 2px rgba(61, 40, 23, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.selector-dropdown option {
+  background-color: #d4c5a0;
+  color: #3d2817;
+  padding: 6px;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .controls,
+  .legend {
+    background-color: rgba(40, 44, 52, 0.95);
+    color: #e0e0e0;
+  }
+
+  .legend h3 {
+    color: #e0e0e0;
+  }
+
+  .legend li {
+    color: #b0b0b0;
+  }
+
+  .zoom-info {
+    color: #999;
+  }
+
+  .gdp-legend {
+    background-color: rgba(40, 44, 52, 0.95);
+  }
+
+  .legend-title {
+    color: #e0e0e0;
+  }
+
+  .legend-label,
+  .legend-range {
+    color: #b0b0b0;  }
+
+  .selector-dropdown {
+    background-color: rgba(60, 64, 80, 0.9);
+    color: #e0e0e0;
+    border-color: #555;
+  }
+
+  .selector-dropdown:hover {
+    background-color: rgba(70, 74, 90, 0.9);
+  }
+
+  .selector-dropdown option {
+    background-color: #3a4048;
+    color: #e0e0e0;
+  }
+
+  .selector-label {
+    color: #b0b0b0;
+  }
+}
