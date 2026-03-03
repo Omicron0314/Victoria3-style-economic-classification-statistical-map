@@ -6,10 +6,26 @@
 import React from 'react';
 import { dataTypes } from '../constants/dataTypes.js';
 
-const GDPLegend = ({ selectedDataType, onDataTypeChange, dataYear, gdpRange, perCapitaRange, isDarkMode }) => {
+const GDPLegend = ({ selectedDataType, onDataTypeChange, dataYear, gdpRange, perCapitaRange, perCapitaPppRange, giniRange, isDarkMode }) => {
   const currentConfig = dataTypes[selectedDataType];
   const isChoropleths = currentConfig?.isChoropleths || false;
-  const range = selectedDataType === 'gdp' ? gdpRange : perCapitaRange;
+  let range;
+  switch (selectedDataType) {
+    case 'gdp':
+      range = gdpRange;
+      break;
+    case 'perCapitaGdp':
+      range = perCapitaRange;
+      break;
+    case 'perCapitaGdpPpp':
+      range = perCapitaPppRange;
+      break;
+    case 'gini':
+      range = giniRange;
+      break;
+    default:
+      range = { min: 0, max: 0 };
+  }
 
   return (
     <div className={`gdp-legend${isDarkMode ? ' dark' : ''}`}>
@@ -83,9 +99,14 @@ const GDPLegend = ({ selectedDataType, onDataTypeChange, dataYear, gdpRange, per
       {range.max > 0 && (
         <div className="legend-range">
           <div>
-            {selectedDataType === 'gdp'
-              ? `$${range.min.toFixed(1)}B - $${range.max.toFixed(1)}B`
-              : `$${range.min.toFixed(0)} - $${range.max.toFixed(0)}`}
+            {selectedDataType === 'gdp' &&
+              `$${range.min.toFixed(1)}B - $${range.max.toFixed(1)}B`}
+            {selectedDataType === 'perCapitaGdp' &&
+              `$${range.min.toFixed(0)} - $${range.max.toFixed(0)}`}
+            {selectedDataType === 'perCapitaGdpPpp' &&
+              `$${range.min.toFixed(0)} - $${range.max.toFixed(0)} PPP`}
+            {selectedDataType === 'gini' &&
+              `${range.min.toFixed(1)} - ${range.max.toFixed(1)}`}
           </div>
         </div>
       )}

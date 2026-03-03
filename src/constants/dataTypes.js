@@ -114,5 +114,23 @@ export const dataTypes = {
       '#81a55d', // 19
       '#5a8c6b'  // 20 深绿
     ]
+  },
+  gini: {
+    label: '基尼系数',
+    unit: '',
+    colors: {
+      low: '#5A8C6B', // inequality low = green
+      mid: '#c9c9c9',
+      high: '#b84842' // inequality high = red
+    },
+    valueFormatter: (val, year) => val ? `${val.toFixed(1)} (${year})` : '无数据',
+    isChoropleths: false,
+    levels: 21,
+    // 反向色阶：高值红低值绿
+    choroplethColors: [
+      '#5a8c6b', '#81a55d', '#89a969', '#91ad75', '#99b181', '#a1b58d', '#a9b999',
+      '#b1bda5', '#b9c1b1', '#c1c5bd', '#c9c9c9', '#d28965', '#cd7c5e', '#c86f57',
+      '#c36250', '#be5549', '#b84842', '#a33634', '#911f26', '#7a0818', '#63000a'
+    ]
   }
 };

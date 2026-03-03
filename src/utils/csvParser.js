@@ -6,6 +6,71 @@
 import { gdpCountryNameMapping, perCapitaCountryNameMapping, perCapitaGdpPppCountryNameMapping } from '../constants/countryNameMappings.js';
 
 /**
+ * 解析基尼系数CSV数据
+ * @param {string} csvText
+ * @returns {object} {data: {国家名称: {value,year}}}
+ */
+export function parseGiniData(csvText) {
+  const lines = csvText.split('\n');
+  // header contains "Country Name" as before
+  let headerLineIdx = -1;
+  for (let i = 0; i < Math.min(5, lines.length); i++) {
+    if (lines[i].includes('Country Name')) {
+      headerLineIdx = i;
+      break;
+    }
+  }
+  if (headerLineIdx === -1) {
+    console.error('Could not find header in Gini CSV');
+    return { data: {} };
+  }
+  const headers = lines[headerLineIdx].split(',').map(h => h.trim().replace(/"/g, ''));
+  const availableYears = [];
+  for (let y = 2025; y >= 2015; y--) {
+    const idx = headers.indexOf(y.toString());
+    if (idx !== -1) availableYears.push({ year: y, index: idx });
+  }
+  if (availableYears.length === 0) {
+    console.error('No year data found in Gini CSV');
+    return { data: {} };
+  }
+  const giniMap = {};
+  for (let i = headerLineIdx + 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    const parts = parseCSVLine(line);
+    if (parts.length < 4) continue;
+    let countryName = parts[0].trim().replace(/"/g, '');
+    if (perCapitaCountryNameMapping[countryName]) {
+      countryName = perCapitaCountryNameMapping[countryName];
+    }
+    if (perCapitaGdpPppCountryNameMapping[countryName]) {
+      countryName = perCapitaGdpPppCountryNameMapping[countryName];
+    }
+    // iterate years
+    let found = null;
+    let ay = 2025;
+    for (const {year, index} of availableYears) {
+      if (index < parts.length) {
+        const v = parts[index].trim();
+        if (v && v !== '' && v !== '..' && v !== 'no data') {
+          const num = parseFloat(v);
+          if (!isNaN(num)) {
+            found = num;
+            ay = year;
+            break;
+          }
+        }
+      }
+    }
+    if (found !== null) {
+      giniMap[countryName] = { value: found, year: ay };
+    }
+  }
+  return { data: giniMap };
+}
+
+/**
  * 简单的CSV解析函数，处理引号和逗号
  * @param {string} line - CSV行文本
  * @returns {string[]} 解析后的字段数组

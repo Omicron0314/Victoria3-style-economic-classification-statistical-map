@@ -5,13 +5,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { parseGDPData, parsePerCapitaGDPData, parsePerCapitaGDPPPPData } from '../utils/csvParser.js';
+import { parseGDPData, parsePerCapitaGDPData, parsePerCapitaGDPPPPData, parseGiniData } from '../utils/csvParser.js';
 
 export function useMapData() {
-  const [allData, setAllData] = useState({ gdp: {}, perCapitaGdp: {}, perCapitaGdpPpp: {} });
+  const [allData, setAllData] = useState({ gdp: {}, perCapitaGdp: {}, perCapitaGdpPpp: {}, gini: {} });
   const [gdpRange, setGdpRange] = useState({ min: 0, max: 0 });
   const [perCapitaRange, setPerCapitaRange] = useState({ min: 0, max: 0 });
   const [perCapitaPppRange, setPerCapitaPppRange] = useState({ min: 0, max: 0 });
+  const [giniRange, setGiniRange] = useState({ min: 0, max: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -28,18 +29,20 @@ export function useMapData() {
         geoDataRef.current = geoData;
 
         // 同时加载三个CSV数据
-        const [gdpCsvText, perCapitaCsvText, perCapitaPppCsvText] = await Promise.all([
+        const [gdpCsvText, perCapitaCsvText, perCapitaPppCsvText, giniCsvText] = await Promise.all([
           fetch('/imf-dm-export-20260302.csv').then(r => r.text()),
           fetch('/GDP%20per%20capita.csv').then(r => r.text()),
-          fetch('/GDP%20per%20capita,%20PPP.csv').then(r => r.text())
+          fetch('/GDP%20per%20capita,%20PPP.csv').then(r => r.text()),
+          fetch('/Gini%20Index.csv').then(r => r.text())
         ]);
 
         // 解析CSV数据
         const { data: gdpDataMap } = parseGDPData(gdpCsvText);
         const { data: perCapitaDataMap } = parsePerCapitaGDPData(perCapitaCsvText);
         const { data: perCapitaPppDataMap } = parsePerCapitaGDPPPPData(perCapitaPppCsvText);
+        const { data: giniDataMap } = parseGiniData(giniCsvText);
 
-        const newAllData = { gdp: gdpDataMap, perCapitaGdp: perCapitaDataMap, perCapitaGdpPpp: perCapitaPppDataMap };
+        const newAllData = { gdp: gdpDataMap, perCapitaGdp: perCapitaDataMap, perCapitaGdpPpp: perCapitaPppDataMap, gini: giniDataMap };
         setAllData(newAllData);
 
         // 计算GDP范围
@@ -75,6 +78,17 @@ export function useMapData() {
           });
         }
 
+        // 计算基尼范围
+        const giniValues = Object.values(giniDataMap)
+          .map(v => v?.value)
+          .filter(v => v !== undefined && v !== null && !isNaN(v));
+        if (giniValues.length > 0) {
+          setGiniRange({
+            min: Math.min(...giniValues),
+            max: Math.max(...giniValues)
+          });
+        }
+
         setLoading(false);
       } catch (err) {
         console.error('Error loading data:', err);
@@ -91,8 +105,7 @@ export function useMapData() {
     allData,
     gdpRange,
     perCapitaRange,
-    perCapitaPppRange,
-    loading,
+    perCapitaPppRange,    giniRange,    loading,
     error,
     geoDataRef
   };

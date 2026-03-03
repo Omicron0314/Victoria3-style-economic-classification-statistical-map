@@ -32,7 +32,7 @@ const InteractiveMap = () => {
   const [themeToggle, setThemeToggle] = useState(0);
 
   // 使用自定义钩子加载数据
-  const { geoData, allData, gdpRange, perCapitaRange, loading, error } = useMapData();
+  const { geoData, allData, gdpRange, perCapitaRange, perCapitaPppRange, giniRange, loading, error } = useMapData();
 
   // 监听系统深色模式变更
   useEffect(() => {
@@ -183,6 +183,8 @@ const InteractiveMap = () => {
         dataYear={dataYear}
         gdpRange={gdpRange}
         perCapitaRange={perCapitaRange}
+        perCapitaPppRange={perCapitaPppRange}
+        giniRange={giniRange}
         isDarkMode={isDarkMode}
       />
 
